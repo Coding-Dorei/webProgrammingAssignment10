@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>마우스 드래깅으로 캔버스에 그림 그리기</title></head>
+<body onload="init()">
+    <h3>마우스를 누른 채 드래깅하여 그림 그려 보세요</h3>
+    <hr>
+    <label for="line-width">선 굵기:</label><input type="number" name="" id="line-width" placeholder="2" onchange="change()" min="1" max="20"><label for="line-color">선 색</label><input type="color" name="" id="line-color" onchange="change()"><label for="">배경색</label><input type="color" name="" id="background-color" onchange="change()">
+    <canvas id="myCanvas" style="background-color:aliceblue" width="1000" height="1000">
+    </canvas>
+    <script>
+        let canvas, context;
+        let line_width = document.getElementById("line-width"), line_color = document.getElementById("line-color"), background_color = document.getElementById("background-color")
+        function change(){
+            canvas.style.backgroundColor = background_color.value
+            context.lineWidth = line_width.value
+            context.strokeStyle = line_color.value
+        }
+        function init() {
+            canvas = document.getElementById("myCanvas");
+            context = canvas.getContext("2d");
+            background_color.value = "#ffffff"
+            change()
+            canvas.addEventListener("mousemove", function (e) { move(e) }, false);
+            canvas.addEventListener("mousedown", function (e) { down(e) }, false);
+            canvas.addEventListener("mouseup", function (e) { up(e) }, false);
+            canvas.addEventListener("mouseout", function (e) { out(e) }, false);
+        }
+        let startX=0, startY=0; // 드래깅동안, 처음 마우스가 눌러진 좌표
+        let dragging=false;
+        function draw(curX, curY) {
+            context.beginPath();
+            context.moveTo(startX, startY);
+            context.lineTo(curX, curY);
+            context.stroke();
+        }
+        function down(e) {
+            startX = e.offsetX; startY = e.offsetY; dragging = true;
+        }
+        function up(e) { dragging = false; }
+        function move(e) {
+            if(!dragging) return; // 마우스가 눌러지지 않았으면 리턴
+            let curX = e.offsetX, curY = e.offsetY;
+            draw(curX, curY);
+            startX = curX; startY = curY;
+        }
+        function out(e) { dragging = false; }
+    </script>
+</body>
+</html>
